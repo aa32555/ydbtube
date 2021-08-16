@@ -50,6 +50,10 @@ npm run dev
 - Navigate to http://localhost:8080. If port 8080 is unavailable, ```quasar``` will use the closest available port.  
 
 #### Running the app in production mode.
+- Make sure you install the dependencies
+```bash
+npm install
+```
 - Make sure you build the application
  ```bash
  npm run build
@@ -63,3 +67,9 @@ $ydb_dist/yottadb -run Start^YDBTUBE
 ```bash
 http://localhost:8090
 ```
+
+### Notes
+    - To upload YouTube videos, you need to enter the url of the vidoes in that format
+    ```
+    https://www.youtube.com/watch?v=0KSOMA3QBU0
+    ```
