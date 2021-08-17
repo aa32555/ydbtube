@@ -64,31 +64,31 @@ UPLOAD(I,O)
 	q
 	;
 IMPORTMP4ERROR
-        set $ZE=""
-        close sd
-        quit
+	set $ZE=""
+	close sd
+	quit
 	;
 SaveVideoByUrl(url)
 	set $ZT="D IMPORTMP4ERROR^YDBTUBEAPI"
 	set url=$p(url,"?v=",2)
 	new return
- 	;zsystem "ytdl ""https://www.youtube.com/watch?v="_url_""" -o "_url_" "
-    ;zsystem "ytdl ""https://www.youtube.com/watch?v="_url_""" -j > "_url_".json"
-	do RunShellCommand^YDBTUBEUTILS("ytdl ""https://www.youtube.com/watch?v="_url_""" -o "_url,.return)
-    hang 0.1
-	do RunShellCommand^YDBTUBEUTILS("ytdl ""https://www.youtube.com/watch?v="_url_""" -j > "_url_".json",.return)
-    k ^TEMP($j)
+		;zsystem "ytdl ""https://www.youtube.com/watch?v="_url_""" -o "_url_" "
+	;zsystem "ytdl ""https://www.youtube.com/watch?v="_url_""" -j > "_url_".json"
+	do RunShellCommand^YDBTUBEUTILS("/usr/local/lib/node_modules/ytdl/bin/ytdl.js ""https://www.youtube.com/watch?v="_url_""" -o "_url,.return)
+	hang 0.1
+	do RunShellCommand^YDBTUBEUTILS("/usr/local/lib/node_modules/ytdl/bin/ytdl.js ""https://www.youtube.com/watch?v="_url_""" -j > "_url_".json",.return)
+	k ^TEMP($j)
 	new sd
 	set sd=url_".json"
 	open sd:(readonly:fixed:recordsize=4080:chset="M")
-    use sd
-    S C=0,SIZE=0
-    for  use sd  read x Q:$ZEOF  d
-    . s C=C+1
-    . s ^TEMP($j,C)=x
-    . S ^TEMP($j)=$G(^TEMP($j))+$L(x)
-    c sd
-    do DECODE^YDBTUBE($name(^TEMP($j)),"response")
+	use sd
+	S C=0,SIZE=0
+	for  use sd  read x Q:$ZEOF  d
+	. s C=C+1
+	. s ^TEMP($j,C)=x
+	. S ^TEMP($j)=$G(^TEMP($j))+$L(x)
+	c sd
+	do DECODE^YDBTUBE($name(^TEMP($j)),"response")
 	n thumbnailIndex
 	set thumnnailIndex=$o(response("videoDetails","thumbnails",""),-1)
 	if thumnnailIndex do 
@@ -109,38 +109,38 @@ SaveVideoByUrl(url)
 	q
 	;
 IMPORTMP4(ID)
-        set $ZT="D IMPORTMP4ERROR^YDBTUBEAPI"
-        kill ^YDBTUBE(ID)
+	set $ZT="D IMPORTMP4ERROR^YDBTUBEAPI"
+	kill ^YDBTUBE(ID)
 		s sd=ID_".mp4"
 		open sd:(readonly:fixed:recordsize=4080)
-        use sd
-        S C=0,SIZE=0
-        for  D  Q:$zeof
-        . I $zeof Q
-        . use sd
-        . read x
-        . s C=C+1
-        . s ^YDBTUBE(ID,C)=x
-        . S ^YDBTUBE(ID)=$G(^YDBTUBE(ID))+$L(x)
-        c sd
-        Q
-        ;
+	use sd
+	S C=0,SIZE=0
+	for  D  Q:$zeof
+	. I $zeof Q
+	. use sd
+	. read x
+	. s C=C+1
+	. s ^YDBTUBE(ID,C)=x
+	. S ^YDBTUBE(ID)=$G(^YDBTUBE(ID))+$L(x)
+	c sd
+	Q
+	;
 IMPORTIMG(ID)
-        set $ZT="D IMPORTMP4ERROR^YDBTUBEAPI"
-        kill ^YDBTUBEIMG(ID)
+	set $ZT="D IMPORTMP4ERROR^YDBTUBEAPI"
+	kill ^YDBTUBEIMG(ID)
 		s sd=ID
 		open sd:(readonly:fixed:recordsize=4080)
-        use sd
-        S C=0,SIZE=0
-        for  D  Q:$zeof
-        . I $zeof Q
-        . use sd
-        . read x
-        . s C=C+1
-        . s ^YDBTUBEIMG(ID,C)=x
-        . S ^YDBTUBEIMG(ID)=$G(^YDBTUBEIMG(ID))+$L(x)
-        c sd
-        Q
+	use sd
+	S C=0,SIZE=0
+	for  D  Q:$zeof
+	. I $zeof Q
+	. use sd
+	. read x
+	. s C=C+1
+	. s ^YDBTUBEIMG(ID,C)=x
+	. S ^YDBTUBEIMG(ID)=$G(^YDBTUBEIMG(ID))+$L(x)
+	c sd
+	Q
 		;
 GETVIDSLIST(I,O)
 		new video,counter
