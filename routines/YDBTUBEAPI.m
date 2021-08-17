@@ -179,3 +179,43 @@ GETVIDEOS(HTTPREQ,HTTPRSP,HTTPARGS)
 	S HTTPRSP("header","Content-Range")="bytes "_start_"-"_(start+size-1)_"/"_videoSize
 	S HTTPRSP("partial")=""
 	quit
+	;
+Save(url)
+	set $ZT="D IMPORTMP4ERROR^YDBTUBEAPI"
+	set url=$p(url,"?v=",2)
+	new return
+	zsystem "ytdl ""https://www.youtube.com/watch?v="_url_""" -o "_url_" "
+	zsystem "ytdl ""https://www.youtube.com/watch?v="_url_""" -j > "_url_".json"
+	;do RunShellCommand^YDBTUBEUTILS("/usr/local/lib/node_modules/ytdl/bin/ytdl.js ""https://www.youtube.com/watch?v="_url_""" -o "_url,.return)
+	hang 0.1
+	;do RunShellCommand^YDBTUBEUTILS("/usr/local/lib/node_modules/ytdl/bin/ytdl.js ""https://www.youtube.com/watch?v="_url_""" -j > "_url_".json",.return)
+	k ^TEMP($j)
+	new sd
+	set sd=url_".json"
+	open sd:(readonly:fixed:recordsize=4080:chset="M")
+	use sd
+	S C=0,SIZE=0
+	for  use sd  read x Q:$ZEOF  d
+	. s C=C+1
+	. s ^TEMP($j,C)=x
+	. S ^TEMP($j)=$G(^TEMP($j))+$L(x)
+	c sd
+	do DECODE^YDBTUBE($name(^TEMP($j)),"response")
+	n thumbnailIndex
+	set thumnnailIndex=$o(response("videoDetails","thumbnails",""),-1)
+	if thumnnailIndex do 
+	. s thumbnailUrl=response("videoDetails","thumbnails",thumnnailIndex,"url")
+	. s thumnailWidth=response("videoDetails","thumbnails",thumnnailIndex,"width")
+	. s thumnailHeight=response("videoDetails","thumbnails",thumnnailIndex,"height")
+	. n return
+	. d RunShellCommand^YDBTUBEUTILS("wget  --no-http-keep-alive"_" -O "_url_" "_thumbnailUrl,.return)
+	new title
+	set title=response("videoDetails","title")
+	set ^YDBTUBEDETAILS(url,"title")=title
+	set ^YDBTUBEDETAILS(url,"sequence")=$I(^YDBTUBECOUNTER)
+	do IMPORTMP4(url)
+	hang 0.1
+	do IMPORTIMG(url)
+	zsystem "rm "_url_".mp4"
+	zsystem "rm "_url_".json"
+	q
