@@ -24,7 +24,7 @@ git clone https://gitlab.com/ahmedydb/ydbtube.git
 
 - Change dirctory
 ```bash
-cd YDBTube
+cd ydbtube
 ```
 
 ##### Server
