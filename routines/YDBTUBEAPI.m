@@ -64,6 +64,7 @@ UPLOAD(I,O)
 	q
 	;
 IMPORTMP4ERROR
+	s ^TEMP("ERROR")=$zstatus
 	set $ZE=""
 	close sd
 	quit
@@ -72,7 +73,7 @@ SaveVideoByUrl(url)
 	set $ZT="D IMPORTMP4ERROR^YDBTUBEAPI"
 	set url=$p(url,"?v=",2)
 	new return
-		;zsystem "ytdl ""https://www.youtube.com/watch?v="_url_""" -o "_url_" "
+	;zsystem "ytdl ""https://www.youtube.com/watch?v="_url_""" -o "_url_" "
 	;zsystem "ytdl ""https://www.youtube.com/watch?v="_url_""" -j > "_url_".json"
 	do RunShellCommand^YDBTUBEUTILS("/usr/local/lib/node_modules/ytdl/bin/ytdl.js ""https://www.youtube.com/watch?v="_url_""" -o "_url,.return)
 	hang 0.1
